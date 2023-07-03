@@ -1,0 +1,457 @@
+============================================================
+*************************** educative pandas series************************
+1. How to create a series in pandas???
+==> series1 = pd.Series([10,20,30]) [ pandas has a method called series, u need to passs an array as an input to it ]
+But in the above manner, index is 0 based numbers. 
+2. How to create a series with custom indexing??
+==> my_series = pd.Series([10,20,30], index=["a","b","c"]) 
+3. How do you access an item of a series??
+==>series1[0] or my_series['a'] => basically like a dictionary, ask for what it has kept on that particular key.
+4. Tell me if the series has all unique values or not??
+==> There is a property is_unique returning True Or False (series1.is_unique, my_series.is_unique)
+***************************************************************************
+===========================================================================
+************************ educative pandas dataframe ***************************
+1. How do you create a dataframe??
+==> think it is collection of series. where series head is nothing but column name 
+df = pd.Dataframe({"Name":["a","b","c"], "age":[3,4,5]}) => dictionary passed with keys as column name head and values are list.
+See the output, it is very clear that the 2 dictionaries made are series here.
+     Name  Age
+0    a   3
+1    b   4
+2    c   5
+2. But again there is a problem, again the indexes are 0 based. There is a way like series to have index as the way we want to have.
+df = pd.Dataframe({"Name":["a","b","c"], "age":[3,4,5]}, index = ['aa','bb','cc'])
+     Name  Age
+aa    a   3
+bb    b   4
+cc    c   5
+3. What if the dataframe is too big and I want to know about it's shape (basicaly rows and columns)?????
+Sol) We should keep a property to keep the idea of it and since we keep it as property and not like a method it works really fast.
+=> use shape property :- df.shape ==> (3,2) ==> rows,columns
+4. Okay this way I can create a df from code where I am passing data. But generally the files are read and data get generated.
+==> So I need to read from the files and the ways of doing it are:-
+pd.read_csv() -> for csv files
+pd.read_excel() -> for excel files
+pd.read_sql() -> for sql files
+5. Now I read a lot of data, and I just want to see some top rows to figure out what kind of data stays???
+But property becomes tough to update every time so a method can be used to do that and we have:-
+==> df.head() ==> this returns top 5 rows from the data.
+6. Now what about the situation when the file has too many columns but we need to read only a some columns and limited rows.
+sales_rows_cols_df = pd.read_csv("sales.csv", usecols=["product_code","product_group","stock_qty"], nrows=10)
+Now this will read only these specified columns and only initial 10 rows from it.
+columns I need to specify which one's I need so usecols but for rows I can only tell which rows to consume meaning nrows.
+'''''''''''''''''Just an info and learning kind of thing''''''''''''''''''''
+import numpy as np
+arr = np.random.randint(10, 20, size=(3,5))
+randint start from 10 and maximum is 20 generate a 2-d array having 3 rows and 5 columns each.
+Q) I have 2d array, I want to have it as df ???
+df = pd.DataFrame(arr, columns=["A","B","C","D","E"])
+''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+7. Now what if I want to know about the size of datafram?? Size is like area length*breadth so it is rows* columns.
+This can again be maintained in a property since it is somewhat same as shape
+df.size ==> rows*cols
+8. What if I need to know how many rows are there in df??
+Use method called len()
+len(df) ==> rows count
+9. Now each column can have different data types, so we also need a way to know what are datatypes of different columns?
+again a property comes handy ==>
+df.dtypes -> this will list all the column names along with their respective column data types.
+
+product_code          int64
+product_group        object
+dtype: object
+
+10. What if you want to know, what all columns are there in your dataframe??
+again a property comes handy, I have used it already numerous times.
+==> df.columns   (it's return type is not list)
+Index(['product_code', 'product_group', 'stock_qty', 'cost', 'price',
+       'last_week_sales', 'last_month_sales'],
+      dtype='object')
+if u want columns in a list, use list(df.columns) 
+	  
+11. Now with datatypes, there comes a possibility that what will you do only by knowing the datatype, I should get a
+chance to change the datatype of a column, so that is also possible in 2 ways.
+way1 :- only a column change:-
+==> sales["stock_qty"] = sales["stock_qty"].astype("float")
+way2:- may columns need to change the data type:-
+==> sales = sales.astype({
+  "stock_qty": "float",
+  "last_week_sales": "float"
+})
+this will change 2 column's datatypes:- first is stock_qty and other is last_week_sales.
+12. I earlier learned to see whether all the the values in a column/series are unique or not.
+But now I want to know what all are the unique values in the particular column??
+==>sales["product_group"].unique()  (u need to pick only for a column)
+What is the number of unique values in the column??
+==> sales["product_group"].nunique() (this will give the count of unique values)
+13. Around this unique featur, one more thing comes to mind 
+I want to know how many times a particular unique value is present in the column??
+==> sales["product_group"].value_counts() => 
+PG4    349
+PG5    255
+PG6    243
+Name: product_group, dtype: int64
+************************************************************
+=====================================================================
+14. Let'd do some calculations on our data 
+a. let's get a series and u have to give me it's median.  (median means someone coming in mid)
+eg = my_series = pd.Series([1,3,5,8,11,13,15])
+median is my_series.median(). => 8.0
+b. how about mode ??
+mode is my_series.mode()
+# mode on a series (mode is returning series of number which are the mode in series eg. 6 and 11 here)
+myseries = pd.Series([1, 4, 6, 6, 6, 11, 11,11, 24])
+print(f"The mode of my series is {myseries.mode()}")
+print(f"The mode of my series is {myseries.mode()[1]}")
+c. mean =  myseries.mean()
+d. maximum = myseries.max()
+e. minimum = myseries.min()
+f. variance = myseries.var()
+g. std deviation = myseries.std()
+<class 'pandas.core.series.Series'>
+** value_counts() this function gives a series having index as numbers and their value counts as value against that index
+eg:- print(sales["product_code"].value_counts().index[:3].to_list())
+print(list(sales["product_code"].value_counts().values))
+=======================================================================
+
+15. methods, operations, properties all about filtering the dataframe :-
+sales dataframe for this section :- 
+	product_code	product_group	stock_qty	cost	price	last_week_sales	last_month_sales
+0		4187			PG2				498		420.76	569.91			13				58
+
+a.The main difference between them is the way they access rows and columns:
+Pandas assigns integer labels to rows by default. Unless we specify otherwise, row indexes and labels will be the same.
+# loc uses row and column labels.
+# loc is looking at the column name 
+sales.loc[:4,["product_group","product_code","stock_qty"]]
+# iloc uses row and column indexes.
+# above thing with iloc only used the indexes
+sales.iloc[:5,[1,0,2]]
+it is saying till 4th label, in index it becomes b4 5th index not till.
+
+b. u want to get same df by picking some columns out of it.
+Selecting a subset of columns
+sales[["product_group","product_code","stock_qty"]]
+or
+colss = ["product_group","product_code","stock_qty"]
+sales[coles]
+	product_code	product_group	stock_qty	
+0		4187			PG2				498
+
+# Even if we want to select only one column, we need to put it in a list.
+# Otherwise, Pandas will return a Series instead of a DataFrame with one column.
+print(sales["product_code"][:2],type(sales["product_code"]))
+print(sales[["product_code"]][:2],type(sales[["product_code"]]))
+
+0    4187
+1    4195
+Name: product_code, dtype: int64 <class 'pandas.core.series.Series'>
+   product_code
+0          4187
+1          4195 <class 'pandas.core.frame.DataFrame'>
+
+
+c. just an example to create df from 2-d array 
+df = pd.DataFrame(
+  np.random.randint(10, size=(4,4)),
+  index = ["a","b","c","d"],
+  columns = ["col_a","col_b","col_c","col_d"]
+  )
+
+print(df)
+
+d. Condition based filtering
+# The following line of code selects the products that belong to product group PG2.
+sales_filtered = sales[sales.product_group == "PG2"]
+sales_filtered = sales[sales["product_group"] == "PG2"]
+sales_filtered.head()
+# We can use any of the options above, unless there’s a space in the column name.
+# In such cases, the first option won’t work. eg:- column name is "product group" here first way of accessing with . won't work.
+
+e. Numeric Filterings:- 
+sales_numeric_filtered = sales[sales["price"] > 100]
+# ==: equal
+# !=: not equal
+# >: greater than
+# >=: greater than or equal to
+# <: less than
+# <=: less than or equal to
+
+f. Multiple conditions
+# filter the sales data frame # logical and here
+sales_filtered = sales[(sales["price"] > 100) & (sales["stock_qty"] < 400)]
+sales_filtered = sales[(sales["product_group"] == "PG1") | (sales["product_group"] == "PG2")]
+sales_filtered.head()
+Here 1. they use bitwise operators inside
+	2. All the conditions are placed inside parenthesis individually.
+	3. When combining multiple conditions, make sure to put each filter inside parentheses. Otherwise, a value error will be generated.
+	
+g. The isin method (suppose the above product_group was needed to be amonst any 3 options, then using | 3 times is not a good way)
+There’s a more practical option, which is the isin method. It accepts a list of values used for filtering.
+sales_filtered = sales[sales["product_group"].isin(["PG1","PG2","PG3"])]
+
+h. Finally, we have the not operator (~). It’s used before the name of the DataFrame inside the square brackets.
+# We can select the products that aren’t in product groups PG1, PG2, or PG3 as follows:
+
+sales_filtered = sales[~sales["product_group"].isin(["PG1","PG2","PG3"])]
+
+i. Query Functions:-
+# It differs from previous functions because it can write the conditions as text. 
+# It’s quite useful and is more practical in various cases.
+sales_filtered = sales.query("price > 100")
+# multiple conditions with query
+sales_filtered = sales.query("price > 100 and stock_qty < 400")
+# be extra careful if writing another string
+sales_filtered = sales.query("product_group == 'PG2'")
+
+==========================================================================
+
+16. String operations
+a. Slicing and indexing :-
+staff df 
+               name             city date_of_birth  start_date   salary  	department 
+0          John Doe      Houston, TX    1998-11-04  2018-08-11  $65,000   	Accounting
+1          Jane Doe     San Jose, CA    1995-08-05  2017-08-24  $70,000		Field Quality
+# A string is a sequence of characters, so each character has an associated index.
+# The indexes of characters can be used to select an individual character or a slice from a string.
+# For instance, we can get the first letter of the strings in the name column as below:
+print(staff["name"].str[0])
+0    J
+1    J
+
+# slicing the initial 3 letters (notice here that 3 is out)
+print(staff["name"].str[0:3])
+# or
+print(staff["name"].str[:3])
+
+b. Splitting and Combining strings:-
+# The Pandas split function is available under the str accessor. 
+# It splits a string at the position of the given character and then returns a list of all parts.
+print(staff["name"].str.split(" "))
+
+c. # It’s not enough to merely split a string. We also need to extract the part we need.
+# The expand parameter of the split function can be used to create separate columns after splitting. 
+# We can then select the column we need.
+from copy import deepcopy
+staff_exp = deepcopy(staff)
+staff_exp["last_name"] = staff_exp["name"].str.split(" ", expand=True)[1]
+print(staff_exp)
+               name             city date_of_birth  start_date   salary  	department		last_name  
+0          John Doe      Houston, TX    1998-11-04  2018-08-11  $65,000   	Accounting		Doe
+1          Jane Doe     San Jose, CA    1995-08-05  2017-08-24  $70,000		Field Quality	Doe
+
+d. # Combining
+print(staff["name"] + " - " + staff["department"])
+0               John Doe - Accounting
+1            Jane Doe - Field Quality
+
+e. Converting Strings to uppercase and lowercase
+staff_exp["name_lower"] = staff_exp["name"].str.lower()
+staff_exp["name_upper"] = staff_exp["name"].str.upper()
+staff_exp["dept_capitalize"] = staff_exp["department"].str.capitalize()
+               name             city date_of_birth  start_date   salary  	department		last_name  name_lower name_upper dept_capitalize
+0          John Doe      Houston, TX    1998-11-04  2018-08-11  $65,000   	Accounting		Doe			john doe   JOHN DOE       Accounting
+1          Jane Doe     San Jose, CA    1995-08-05  2017-08-24  $70,000		Field Quality	Doe			jane doe   JANE DOE    Field quality
+
+f. replace method of str
+print(staff["city"].str.replace(",", "-"))
+
+When we work on tabular data (data in tables), 
+it’s much more efficient to use the string methods under the str accessor. 
+They allow us to perform operations on the entire column. 
+Make sure to write str` before the name of the method.
+
+g. # previously we replaced one column values based on some condition, what if I want to replace it in entire series based on different cases
+# answer is direct replace method
+staff = pd.read_csv("staff.csv")
+
+# Create a state column
+staff["state"] = staff["city"].str[-2:]
+print(staff["state"])
+# Replace state abbreviations with actual state names
+staff["state"].replace(
+    {"TX": "Texas", "CA": "California", "FL": "Florida", "GA": "Georgia"},
+    inplace = True
+)
+
+print(staff["state"])
+
+The inplace parameter is set to True to save changes in the DataFrame.
+
+It’s important to emphasize the difference between str.replace and DataFrame.replace:
+
+str.replace can be used to replace a part of a string. We can replace one character, multiple characters, or the entire string.
+DataFrame.replace can be used to replace the entire value. We can also use this function to replace values with other data types such as integer and boolean.
+
+h. an example to learn combination of operations
+# filtering operation with the query function, extracts the year from the start_date column,
+# and changes its data type to integer.
+print(staff[["name","start_date"]])
+print(staff.query("name > 'John Doe'").start_date.str[:4].astype("int"))
+===================================================================================================
+
+17. Pandas datetime 
+DateTime [The datetime64[ns] data type can be used to express date and time values. 
+The values that have datetime64[ns]data type are calledTimestamp. 
+A Timestampcontains both date and time information. 
+We can convert a string representing a date to a Timestamp by using theto_datetime` constructor.]
+
+a. mydate = pd.to_datetime("2021-11-10")
+print(mydate)
+2021-11-10 00:00:00
+
+b. # Another commonly used data type with dates and times is timedelta[ns]
+# which is used for representing the difference between two datetime objects.
+first_date = pd.to_datetime("2021-10-10")
+second_date = pd.to_datetime("2021-10-02")
+diff = first_date - second_date
+
+print(diff)
+print(diff.days)
+
+8 days 00:00:00
+8
+
+c. # staff df has 2 columns date_of_birth and start_date with these info. Use astype
+# initial reading is object, lets convert them to datetime
+staff = staff.astype({"date_of_birth":"datetime64[ns]","start_date":"datetime64[ns]",})
+print(staff.dtypes)
+
+d. the attributes of a datetime 
+mydate = pd.to_datetime("2021-10-10")
+
+print(f"The year part is {mydate.year}")
+print(f"The month part is {mydate.month}")
+print(f"The week number part is {mydate.week}")
+print(f"The day part is {mydate.day}")
+
+The year part is 2021
+The month part is 10
+The week number part is 40
+The day part is 10
+
+# time related information
+print(f"The hour part of mydate is {mydate.hour}")
+print(f"The minute part of mydate is {mydate.minute}")
+print(f"The second part of mydate is {mydate.second}")
+
+The hour part of mydate is 14
+The minute part of mydate is 30
+The second part of mydate is 0
+
+e. Methods on datetime 
+
+mydate = pd.to_datetime("2021-12-21 00:00:00")
+
+print(f"The date part is {mydate.date()}")
+print(f"The day of week is {mydate.weekday()}")
+print(f"The name of the month is {mydate.month_name()}")
+print(f"The name of the day is {mydate.day_name()}")
+
+The date part is 2021-12-21
+The day of week is 1
+The name of the month is December
+The name of the day is Tuesday
+
+f. Like .str we had for accesing the column as string and then used string based methods 
+We have .dt which gives us datetime based methods 
+
+# In most cases, we don’t work with single values but with data stored in a DataFrame. 
+# A typical DataFrame of transactional sales at a retail store might contain millions of rows.
+
+# read DataFrame
+staff = pd.read_csv("staff.csv")
+
+# change the data type of date columns
+staff = staff.astype({
+    "date_of_birth": "datetime64[ns]",
+    "start_date": "datetime64[ns]",
+})
+
+# create start_month column
+staff["start_month"] = staff["start_date"].dt.month
+
+print(staff)
+
+               name             city date_of_birth start_date   salary  start_month
+0          John Doe      Houston, TX    1998-11-04 2018-08-11  $65,000   8
+1          Jane Doe     San Jose, CA    1995-08-05 2017-09-24  $70,000 	 9
+
+g. # We can get the year and dayparts using the year and day in a similar way. 
+# Some other methods available through the dt accessor are:
+
+# weekday
+# hour
+# minute
+# second
+
+staff["start_date"].dt.isocalendar()
+
+	year	week	day
+0	2018	32	6
+1	2017	34	4
+
+h. datetime data offset methods 
+
+The units that can be used in the DataOffset function are:
+(always plural)
+years
+months
+weeks
+days
+hours
+minutes
+seconds
+microseconds
+nanoseconds
+
+# create raise_date column
+staff["raise_date"] = staff["start_date"] + pd.DateOffset(years=1)
+staff["months"] = staff["start_date"] + pd.DateOffset(months=6)
+
+print(staff[["start_date","raise_date", "months"]].head())
+
+ start_date raise_date     months
+0 2018-08-11 2019-08-11 2019-02-11
+1 2017-08-24 2018-08-24 2018-02-24
+
+# 2 methods of subtraction  (- can be passed in func or can also be used before pd.DataOffset
+mytime = pd.Timestamp("2021-12-14 16:50:00") 
+
+print("The first method")
+print(mytime + pd.DateOffset(hours=-2))
+
+print("\nThe second method")
+print(mytime - pd.DateOffset(hours=2))
+
+
+The first method
+2021-12-14 14:50:00
+
+The second method
+2021-12-14 14:50:00
+
+h. the timedelta function 
+# Another function to do same thing is TimeDelta but it does not support year, month units
+# W and w represent a week
+# D and d represent a day
+# H and h represent an hour
+# T and t represent a minute
+# S and s represent a second
+# L and l represent a millisecond
+# U and u represent a microsecond
+# N and n represent a nanosecond
+
+print(staff["start_date"] + pd.Timedelta(value=12, unit="W"))
+
+# One nice feature of the Timedelta function is that it accepts strings for
+# specifying the duration to be added or subtracted. 
+# To use this format, both the value and unit are written as a single string. 
+# We simply need to write the unit, as with the unit parameter. 
+# Let’s do the same example as above but with a string.
+
+# add 12 weeks
+print(staff["start_date"] + pd.Timedelta("12 W"))
+
+========================================================================================================================
